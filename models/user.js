@@ -2,42 +2,47 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: "Invalid email address",
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  address: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  phone: {
-    type: String,
-    required: false,
-    default: "",
-    validate: {
-      validator: function (v) {
-        return validator.isMobilePhone(v, "any", { strictMode: false });
+const UserSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid email address",
       },
-      message: "Invalid phone number",
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    address: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    phone: {
+      type: String,
+      required: false,
+      default: "",
+      validate: {
+        validator: function (v) {
+          return (
+            v === "" || validator.isMobilePhone(v, "any", { strictMode: false })
+          );
+        },
+        message: "Invalid phone number",
+      },
     },
   },
-});
+  { timestamps: true }
+);
 
 // Hash the password before saving the user
 UserSchema.pre("save", async function (next) {

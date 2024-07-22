@@ -1,11 +1,36 @@
 const Item = require("../models/item");
 const Category = require("../models/category");
 
-// GET all items
+// GET all items with pagination, search, and filter
 exports.getAllItems = async (req, res) => {
+  const { page = 1, limit = 10, search = "", category = "" } = req.query;
+
   try {
-    const items = await Item.find().populate("categoryId");
-    res.json(items);
+    let query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    if (category) {
+      query.categoryId = category;
+    }
+
+    const items = await Item.find(query)
+      .populate("categoryId")
+      .limit(limit * 1) // Convert limit to number and apply
+      .skip((page - 1) * limit) // Calculate the number of documents to skip
+      .exec();
+
+    // Get total count of matching documents for pagination info
+    const count = await Item.countDocuments(query);
+
+    res.json({
+      items,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      total: count,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -21,20 +46,17 @@ exports.createItem = async (req, res) => {
   const { name, description, category } = req.body; // Nhận object category từ body request
 
   let categoryId;
+  let categoryObj = null;
 
   // Check if category exists or create a new one
   try {
-    let existingCategory = await Category.findOne({ name: category.name });
+    let existingCategory = await Category.findOne({ _id: category });
 
     if (existingCategory) {
       categoryId = existingCategory._id;
+      categoryObj = existingCategory;
     } else {
-      const newCategory = new Category({
-        name: category.name,
-        description: category.description,
-      });
-      const savedCategory = await newCategory.save();
-      categoryId = savedCategory._id;
+      return res.status(404).json({ message: "Category not found" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -48,7 +70,12 @@ exports.createItem = async (req, res) => {
 
   try {
     const newItem = await item.save();
-    res.status(201).json(newItem);
+    const { categoryId, ...itemWithoutCategoryId } = newItem.toObject();
+
+    res.status(201).json({
+      ...itemWithoutCategoryId,
+      category: categoryObj,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

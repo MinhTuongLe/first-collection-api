@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { checkEmailExists } = require("../middleware/user");
 
 // REGISTER a new user
-router.post("/register", userController.registerUser);
+router.post("/register", checkEmailExists, userController.registerUser);
 
 // LOGIN a user
 router.post("/login", userController.loginUser);

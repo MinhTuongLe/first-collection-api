@@ -1,10 +1,30 @@
 const Category = require("../models/category");
 
-// GET all categories
+// GET all categories with pagination, search, and filter
 exports.getAllCategories = async (req, res) => {
+  const { page = 1, limit = 10, search = "" } = req.query;
+
   try {
-    const categories = await Category.find();
-    res.json(categories);
+    let query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    const categories = await Category.find(query)
+      .limit(limit * 1) // Convert limit to number and apply
+      .skip((page - 1) * limit) // Calculate the number of documents to skip
+      .exec();
+
+    // Get total count of matching documents for pagination info
+    const count = await Category.countDocuments(query);
+
+    res.json({
+      categories,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      total: count,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

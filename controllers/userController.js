@@ -42,10 +42,30 @@ exports.loginUser = async (req, res) => {
 
 // GET all users
 exports.getAllUsers = async (req, res) => {
+  const { page = 1, limit = 10, search = "" } = req.query;
+
   try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
+    let query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    const users = await User.find(query)
+      .limit(limit * 1) // Convert limit to number and apply
+      .skip((page - 1) * limit) // Calculate the number of documents to skip
+      .exec();
+
+    // Get total count of matching documents for pagination info
+    const count = await User.countDocuments(query);
+
+    res.json({
+      users,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      total: count,
+    });
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
@@ -75,5 +95,15 @@ exports.updateUser = async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+// DELETE user
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.deleteOne({ _id: req.params.id });
+    res.json({ message: "Deleted User" });
+  } catch (error) {
+    res.status(500).json({ message: err.message });
   }
 };
