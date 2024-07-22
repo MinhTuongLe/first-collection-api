@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { PaymentMethod, PaymentStatus } = require("../config/payment");
 
 const PaymentSchema = new mongoose.Schema(
   {
@@ -13,11 +14,13 @@ const PaymentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
+      enum: Object.values(PaymentStatus),
+      default: PaymentStatus.PENDING,
     },
     method: {
       type: String,
-      required: true,
+      enum: Object.values(PaymentMethod),
+      default: PaymentMethod.COD,
     },
   },
   { timestamps: true }

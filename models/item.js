@@ -15,6 +15,10 @@ const ItemSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    price: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );

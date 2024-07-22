@@ -1,6 +1,7 @@
 const item = require("../models/item");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -42,7 +43,7 @@ exports.loginUser = async (req, res) => {
 
 // GET all users
 exports.getAllUsers = async (req, res) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
+  const { page = 1, limit = 10, search = "", email = "" } = req.query;
 
   try {
     let query = {};
@@ -68,6 +69,16 @@ exports.getAllUsers = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+// GET one user by id
+exports.getUserById = async (req, res) => {
+  res.json(res.user);
+};
+
+// GET one user by email
+exports.getUserByEmail = async (req, res) => {
+  res.json(res.user);
 };
 
 // UPDATE user

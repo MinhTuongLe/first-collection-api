@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ShipmentStatus, ShipmentCarrier } = require("../config/shipment");
 
 const ShipmentSchema = new mongoose.Schema(
   {
@@ -9,7 +10,8 @@ const ShipmentSchema = new mongoose.Schema(
     },
     carrier: {
       type: String,
-      required: true,
+      enum: Object.values(ShipmentCarrier),
+      default: ShipmentCarrier.UPS,
     },
     trackingNumber: {
       type: String,
@@ -17,7 +19,8 @@ const ShipmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
+      enum: Object.values(ShipmentStatus),
+      default: ShipmentStatus.PENDING,
     },
   },
   { timestamps: true }

@@ -16,6 +16,30 @@ async function getUser(req, res, next) {
   next();
 }
 
+// Middleware to get user by Email
+async function getUserByEmail(req, res, next) {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    // Kiểm tra sự tồn tại của email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Nếu email tồn tại, tiếp tục xử lý
+    res.user = user;
+    next();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 // Middleware to check email is existed
 async function checkEmailExists(req, res, next) {
   const { email } = req.body;
@@ -42,4 +66,5 @@ async function checkEmailExists(req, res, next) {
 module.exports = {
   getUser,
   checkEmailExists,
+  getUserByEmail,
 };

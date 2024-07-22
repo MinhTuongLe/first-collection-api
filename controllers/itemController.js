@@ -43,7 +43,7 @@ exports.getItemById = async (req, res) => {
 
 // CREATE a new item
 exports.createItem = async (req, res) => {
-  const { name, description, category } = req.body; // Nhận object category từ body request
+  const { name, description, category, price } = req.body; // Nhận object category từ body request
 
   let categoryId;
   let categoryObj = null;
@@ -66,6 +66,7 @@ exports.createItem = async (req, res) => {
     name,
     description,
     categoryId,
+    price,
   });
 
   try {

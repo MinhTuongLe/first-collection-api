@@ -6,6 +6,7 @@ const authRouter = require("./routes/auth");
 const usersRouter = require("./routes/users");
 const itemsRouter = require("./routes/items");
 const categoriesRouter = require("./routes/categories");
+const ordersRouter = require("./routes/orders");
 const helmet = require("helmet");
 const cors = require("cors");
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/orders", ordersRouter);
 
 // Start server
 const PORT = process.env.PORT || 5000;
