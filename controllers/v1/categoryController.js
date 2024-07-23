@@ -1,4 +1,4 @@
-const Category = require("../models/category");
+const Category = require("../../models/category");
 
 // GET all categories with pagination, search, and filter
 exports.getAllCategories = async (req, res) => {

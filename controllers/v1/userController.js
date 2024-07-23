@@ -1,5 +1,5 @@
-const item = require("../models/item");
-const User = require("../models/user");
+const item = require("../../models/item");
+const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 

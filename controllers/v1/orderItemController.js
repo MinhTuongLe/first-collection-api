@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const OrderItem = require("../models/orderItem");
+const OrderItem = require("../../models/orderItem");
 
 // CREATE a new order item
 exports.createOrderItem = async (itemData) => {

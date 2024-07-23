@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const itemController = require("../controllers/itemController");
-const auth = require("../middleware/auth");
-const getItem = require("../middleware/item");
+const itemController = require("../../controllers/v1/itemController");
+const auth = require("../../middleware/auth");
+const getItem = require("../../middleware/item");
 
 // GET all items
 router.get("/", itemController.getAllItems);

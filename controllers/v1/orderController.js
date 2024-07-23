@@ -1,4 +1,4 @@
-const Order = require("../models/order");
+const Order = require("../../models/order");
 const orderItemController = require("./orderItemController");
 
 // GET all orders with pagination, search, and filter

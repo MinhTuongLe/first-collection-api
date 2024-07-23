@@ -1,5 +1,5 @@
-const Item = require("../models/item");
-const Category = require("../models/category");
+const Item = require("../../models/item");
+const Category = require("../../models/category");
 
 // GET all items with pagination, search, and filter
 exports.getAllItems = async (req, res) => {

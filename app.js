@@ -2,30 +2,37 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
-const authRouter = require("./routes/auth");
-const usersRouter = require("./routes/users");
-const itemsRouter = require("./routes/items");
-const categoriesRouter = require("./routes/categories");
-const ordersRouter = require("./routes/orders");
 const helmet = require("helmet");
 const cors = require("cors");
-
-const app = express();
+const { versioningMiddleware } = require("./middleware/versioning");
 
 // Connect to database
 connectDB();
+
+const app = express();
 
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
+app.use(versioningMiddleware);
 
-// Routes
-app.use("/api/auth", authRouter);
-app.use("/api/items", itemsRouter);
-app.use("/api/categories", categoriesRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/orders", ordersRouter);
+// Dynamic routes
+const routes = {
+  v1: {
+    auth: require("./routes/v1/auth"),
+    users: require("./routes/v1/users"),
+    items: require("./routes/v1/items"),
+    categories: require("./routes/v1/categories"),
+    orders: require("./routes/v1/orders"),
+  },
+};
+
+app.use("/api/v1/auth", routes.v1.auth);
+app.use("/api/v1/users", routes.v1.users);
+app.use("/api/v1/items", routes.v1.items);
+app.use("/api/v1/categories", routes.v1.categories);
+app.use("/api/v1/orders", routes.v1.orders);
 
 // Start server
 const PORT = process.env.PORT || 5000;
