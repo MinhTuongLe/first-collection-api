@@ -11,6 +11,7 @@ const PaymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
+      min: [0, "Amount must be a positive number"],
     },
     status: {
       type: String,

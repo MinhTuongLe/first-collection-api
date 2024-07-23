@@ -13,10 +13,10 @@ router.get("/:id", auth, getOrder, orderController.getOrderById);
 // CREATE a new order
 router.post("/", auth, orderController.createOrder);
 
-// // UPDATE an item
-// router.patch("/:id", auth, getItem, itemController.updateItem);
+// UPDATE an order status
+router.patch("/status/:id", auth, getOrder, orderController.updateOrderStatus);
 
-// // DELETE an item
-// router.delete("/:id", auth, getItem, itemController.deleteItem);
+// DELETE an order
+router.delete("/:id", auth, getOrder, orderController.deleteOrder);
 
 module.exports = router;

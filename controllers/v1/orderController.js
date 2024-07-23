@@ -1,3 +1,4 @@
+const { OrderStatus } = require("../../config/order");
 const Order = require("../../models/order");
 const orderItemController = require("./orderItemController");
 
@@ -94,43 +95,45 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// // UPDATE an item
-// exports.updateItem = async (req, res) => {
-//   const { name, description, categoryId } = req.body;
+// UPDATE order status
+exports.updateOrderStatus = async (req, res) => {
+  const { status } = req.body;
 
-//   if (name != null) {
-//     res.item.name = name;
-//   }
-//   if (description != null) {
-//     res.item.description = description;
-//   }
-//   if (categoryId != null) {
-//     // Check if category exists
-//     try {
-//       const category = await Category.findById(categoryId);
-//       if (!category) {
-//         return res.status(404).json({ message: "Category not found" });
-//       }
-//     } catch (err) {
-//       return res.status(500).json({ message: err.message });
-//     }
-//     res.item.categoryId = categoryId;
-//   }
+  // tạo mảng các status hiện có
+  const OrderStatusesMapped = Object.values(OrderStatus);
 
-//   try {
-//     const updatedItem = await res.item.save();
-//     res.json(updatedItem);
-//   } catch (err) {
-//     res.status(400).json({ message: err.message });
-//   }
-// };
+  try {
+    if (!status || !OrderStatusesMapped.includes(status)) {
+      return res.status(404).json({ message: "Status is invalid" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 
-// // DELETE an item
-// exports.deleteItem = async (req, res) => {
-//   try {
-//     await Item.deleteOne({ _id: req.params.id });
-//     res.json({ message: "Deleted Item" });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
+  // Cập nhật trạng thái của đơn hàng
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(updatedOrder);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// DELETE an order
+exports.deleteOrder = async (req, res) => {
+  try {
+    await Order.deleteOne({ _id: req.params.id });
+    res.json({ message: "Deleted Order" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

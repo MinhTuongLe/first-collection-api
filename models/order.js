@@ -18,6 +18,7 @@ const OrderSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
       required: true,
+      min: [0, "Total amount must be a positive number"],
     },
     status: {
       type: String,
