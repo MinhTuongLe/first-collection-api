@@ -4,13 +4,17 @@ const orderItemController = require("./orderItemController");
 
 // GET all orders with pagination, search, and filter
 exports.getAllOrders = async (req, res) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
+  const { page = 1, limit = 10, search = "", user = "" } = req.query;
 
   try {
     let query = {};
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
+    }
+
+    if (user) {
+      query.userId = user;
     }
 
     const orders = await Order.find(query)
@@ -21,6 +25,7 @@ exports.getAllOrders = async (req, res) => {
           model: "Item",
         },
       })
+      .populate("userId")
       .limit(limit * 1) // Convert limit to number and apply
       .skip((page - 1) * limit) // Calculate the number of documents to skip
       .exec();
