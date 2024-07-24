@@ -4,7 +4,7 @@ const Item = require("../models/item");
 async function getItem(req, res, next) {
   let item;
   try {
-    item = await Item.findById(req.params.id).populate("categoryId");
+    item = await Item.findById(req.params.id).populate({ path: "category" });
 
     if (item == null) {
       return res.status(404).json({ message: "Cannot find item" });

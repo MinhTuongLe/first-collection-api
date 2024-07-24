@@ -16,6 +16,12 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          return v.length >= 6 && v.length <= 256;
+        },
+        message: "Password must be between 6 and 256 characters long",
+      },
     },
     name: {
       type: String,

@@ -1,5 +1,7 @@
 const { OrderStatus } = require("../../config/order");
+const { checkIsOwnerOfOrder } = require("../../middleware/order");
 const Order = require("../../models/order");
+const OrderItem = require("../../models/orderItem");
 const orderItemController = require("./orderItemController");
 
 // GET all orders with pagination, search, and filter
@@ -21,11 +23,10 @@ exports.getAllOrders = async (req, res) => {
       .populate({
         path: "orderItems",
         populate: {
-          path: "itemId",
-          model: "Item",
+          path: "item",
         },
       })
-      .populate("userId")
+      .populate({ path: "user" })
       .limit(limit * 1) // Convert limit to number and apply
       .skip((page - 1) * limit) // Calculate the number of documents to skip
       .exec();
@@ -46,6 +47,11 @@ exports.getAllOrders = async (req, res) => {
 
 // GET one order
 exports.getOrderById = async (req, res) => {
+  // Kiểm tra đơn hàng có tồn tại và có phải là chủ đơn hàng không
+  if (!res.order || !checkIsOwnerOfOrder(res.order.userId, req.user)) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+
   res.json(res.order);
 };
 
@@ -136,8 +142,35 @@ exports.updateOrderStatus = async (req, res) => {
 // DELETE an order
 exports.deleteOrder = async (req, res) => {
   try {
+    // Kiểm tra có phải là chủ đơn hàng không và đơn hàng có phải đang PENDING
+    if (!checkIsOwnerOfOrder(res.order.userId, req.user)) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (res.order.status !== OrderStatus.PENDING) {
+      return res
+        .status(404)
+        .json({ message: "Order can't be deleted because it's proceed" });
+    }
+
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(req.params.id).populate("orderItems");
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Xóa tất cả các orderItems liên kết với đơn hàng
+    if (order.orderItems.length > 0) {
+      await OrderItem.deleteMany({
+        _id: { $in: order.orderItems.map((item) => item._id) },
+      });
+    }
+
+    // Xóa đơn hàng
     await Order.deleteOne({ _id: req.params.id });
-    res.json({ message: "Deleted Order" });
+
+    res.json({ message: "Deleted Order and associated OrderItems" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -29,4 +29,16 @@ const OrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Define a virtual field for `user`
+OrderSchema.virtual("user", {
+  ref: "User", // The model to use
+  localField: "userId", // The field in the order model
+  foreignField: "_id", // The field in the user model
+  justOne: true, // For one-to-one relationship
+});
+
+// Apply the virtual fields when converting the document to JSON
+OrderSchema.set("toObject", { virtuals: true });
+OrderSchema.set("toJSON", { virtuals: true });
+
 module.exports = mongoose.model("Order", OrderSchema);

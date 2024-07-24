@@ -8,20 +8,26 @@ async function getOrder(req, res, next) {
       .populate({
         path: "orderItems",
         populate: {
-          path: "itemId",
-          model: "Item",
+          path: "item",
         },
       })
+      .populate({ path: "user" })
       .exec();
 
     if (order == null) {
       return res.status(404).json({ message: "Cannot find order" });
     }
+
+    res.order = order;
+    next();
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
-  res.order = order;
-  next();
 }
 
-module.exports = { getOrder };
+// Middleware to check is owner of order
+function checkIsOwnerOfOrder(orderOwnerId, currentUserId) {
+  return orderOwnerId == currentUserId;
+}
+
+module.exports = { getOrder, checkIsOwnerOfOrder };

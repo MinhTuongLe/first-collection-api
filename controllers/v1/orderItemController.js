@@ -23,3 +23,12 @@ exports.createOrderItem = async (itemData) => {
     throw new Error(err.message);
   }
 };
+
+// DELETE an order item
+exports.deleteOrderItem = async (orderItemId) => {
+  try {
+    await OrderItem.deleteOne({ _id: orderItemId });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

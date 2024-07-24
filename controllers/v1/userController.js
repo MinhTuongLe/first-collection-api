@@ -1,7 +1,5 @@
-const item = require("../../models/item");
 const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
-const validator = require("validator");
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -23,12 +21,12 @@ exports.loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid email" });
     }
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

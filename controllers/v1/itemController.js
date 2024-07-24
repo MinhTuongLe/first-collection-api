@@ -17,7 +17,7 @@ exports.getAllItems = async (req, res) => {
     }
 
     const items = await Item.find(query)
-      .populate("categoryId")
+      .populate({ path: "category" })
       .limit(limit * 1) // Convert limit to number and apply
       .skip((page - 1) * limit) // Calculate the number of documents to skip
       .exec();
@@ -38,6 +38,10 @@ exports.getAllItems = async (req, res) => {
 
 // GET one item
 exports.getItemById = async (req, res) => {
+  if (!res.item) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+
   res.json(res.item);
 };
 
