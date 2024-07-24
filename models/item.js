@@ -20,6 +20,11 @@ const ItemSchema = new mongoose.Schema(
       required: true,
       min: [0, "Price must be a positive number"],
     },
+    status: {
+      type: Number,
+      enum: Object.values(Statuses),
+      default: Statuses.ACTIVE,
+    },
   },
   { timestamps: true }
 );

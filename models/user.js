@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const { Roles } = require("../config/role");
+const { Statuses } = require("../config/status");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -46,9 +48,34 @@ const UserSchema = new mongoose.Schema(
         message: "Invalid phone number",
       },
     },
+    role: {
+      type: Number,
+      enum: Object.values(Roles),
+      default: Roles.USER,
+    },
+    status: {
+      type: Number,
+      enum: Object.values(Statuses),
+      default: Statuses.ACTIVE,
+    },
   },
   { timestamps: true }
 );
+
+// Exclude password from JSON and Object output
+UserSchema.set("toJSON", {
+  transform: function (doc, ret, options) {
+    delete ret.password;
+    return ret;
+  },
+});
+
+UserSchema.set("toObject", {
+  transform: function (doc, ret, options) {
+    delete ret.password;
+    return ret;
+  },
+});
 
 // Hash the password before saving the user
 UserSchema.pre("save", async function (next) {
