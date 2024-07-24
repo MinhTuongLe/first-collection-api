@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Statuses } = require("../config/status");
 
 const ItemSchema = new mongoose.Schema(
   {
