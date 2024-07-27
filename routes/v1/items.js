@@ -3,6 +3,7 @@ const router = express.Router();
 const itemController = require("../../controllers/v1/itemController");
 const auth = require("../../middleware/auth");
 const getItem = require("../../middleware/item");
+const { checkIsAdmin } = require("../../middleware/user");
 
 // GET all items
 router.get("/", itemController.getAllItems);
@@ -11,12 +12,21 @@ router.get("/", itemController.getAllItems);
 router.get("/:id", auth, getItem, itemController.getItemById);
 
 // CREATE a new item
-router.post("/", auth, itemController.createItem);
+router.post("/", auth, checkIsAdmin, itemController.createItem);
 
 // UPDATE an item
-router.patch("/:id", auth, getItem, itemController.updateItem);
+router.patch("/:id", auth, checkIsAdmin, getItem, itemController.updateItem);
+
+// UPDATE an item status
+router.patch(
+  "/status/:id",
+  auth,
+  checkIsAdmin,
+  getItem,
+  itemController.updateItemStatus
+);
 
 // DELETE an item
-router.delete("/:id", auth, getItem, itemController.deleteItem);
+router.delete("/:id", auth, checkIsAdmin, getItem, itemController.deleteItem);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const { Roles } = require("../config/role");
 const User = require("../models/user");
 
 // Middleware to get user by ID
@@ -63,8 +64,35 @@ async function checkEmailExists(req, res, next) {
   }
 }
 
+// Middleware to check is role admin
+async function checkIsAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  try {
+    // Tìm user và kiểm tra role có phải Admin
+    const user = await User.findById(req.user);
+
+    // Nếu không tìm thấy
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Nếu không phải Admin
+    if (user.role !== Roles.ADMIN) {
+      return res.status(403).json({ message: "Do not have permission" });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 module.exports = {
   getUser,
   checkEmailExists,
   getUserByEmail,
+  checkIsAdmin,
 };

@@ -1,5 +1,8 @@
 const Item = require("../../models/item");
 const Category = require("../../models/category");
+const { Statuses } = require("../../config/status");
+const { findPendingOrderContainItem } = require("../../middleware/order");
+const { isEmpty } = require("lodash");
 
 // GET all items with pagination, search, and filter
 exports.getAllItems = async (req, res) => {
@@ -39,7 +42,7 @@ exports.getAllItems = async (req, res) => {
 // GET one item
 exports.getItemById = async (req, res) => {
   if (!res.item) {
-    return res.status(404).json({ message: "Order not found" });
+    return res.status(404).json({ message: "Item not found" });
   }
 
   res.json(res.item);
@@ -54,7 +57,10 @@ exports.createItem = async (req, res) => {
 
   // Check if category exists or create a new one
   try {
-    let existingCategory = await Category.findOne({ _id: category });
+    let existingCategory = await Category.findOne({
+      _id: category,
+      status: Statuses.ACTIVE,
+    });
 
     if (existingCategory) {
       categoryId = existingCategory._id;
@@ -110,6 +116,38 @@ exports.updateItem = async (req, res) => {
   }
 
   try {
+    const updatedItem = await res.item.save();
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// UPDATE an item status
+exports.updateItemStatus = async (req, res) => {
+  const { status } = req.body;
+
+  if (
+    status === undefined ||
+    status === null ||
+    !Object.values(Statuses).includes(status)
+  ) {
+    return res.status(400).json({ message: "Invalid status" });
+  }
+
+  try {
+    if (status === Statuses.INACTIVE) {
+      // Tìm có order nào đang được thực hiện hay không
+      const pendingOrders = await findPendingOrderContainItem(res.item.id);
+
+      if (pendingOrders && !isEmpty(pendingOrders)) {
+        return res.status(400).json({
+          message: "Update status failed. There is an order being processed.",
+        });
+      }
+    }
+
+    res.item.status = status;
     const updatedItem = await res.item.save();
     res.json(updatedItem);
   } catch (err) {

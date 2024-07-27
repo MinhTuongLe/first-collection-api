@@ -1,4 +1,7 @@
+const { default: mongoose } = require("mongoose");
 const Category = require("../models/category");
+const Item = require("../models/item");
+const { Statuses } = require("../config/status");
 
 // Middleware to get category by ID
 async function getCategory(req, res, next) {
@@ -15,4 +18,18 @@ async function getCategory(req, res, next) {
   next();
 }
 
-module.exports = getCategory;
+// Middleware to find active item
+async function getActiveItem(categoryId) {
+  try {
+    let item = await Item.find({
+      status: Statuses.ACTIVE,
+      categoryId: new mongoose.Types.ObjectId(categoryId),
+    });
+
+    return item;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+module.exports = { getCategory, getActiveItem };

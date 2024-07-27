@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const OrderItem = require("../../models/orderItem");
+const Item = require("../../models/item");
+const { Statuses } = require("../../config/status");
 
 // CREATE a new order item
 exports.createOrderItem = async (itemData) => {
@@ -9,6 +11,16 @@ exports.createOrderItem = async (itemData) => {
     // Kiểm tra tính hợp lệ của itemId
     if (!mongoose.Types.ObjectId.isValid(itemId)) {
       throw new Error(`Invalid item ID: ${itemId}`);
+    }
+
+    const chosenItem = await Item.findOne({
+      _id: itemId,
+      status: Statuses.ACTIVE,
+    });
+
+    // xử lý khi item có status không active
+    if (!chosenItem) {
+      return;
     }
 
     // Tạo và lưu OrderItem

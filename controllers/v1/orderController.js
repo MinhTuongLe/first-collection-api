@@ -84,7 +84,9 @@ exports.createOrder = async (req, res) => {
           quantity,
           price,
         });
-        orderItemsArray.push(savedOrderItem._id);
+
+        // xử lý khi item có status không active
+        if (savedOrderItem) orderItemsArray.push(savedOrderItem._id);
       } catch (err) {
         return res.status(400).json({ message: err.message });
       }

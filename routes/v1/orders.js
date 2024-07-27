@@ -3,6 +3,7 @@ const router = express.Router();
 const orderController = require("../../controllers/v1/orderController");
 const auth = require("../../middleware/auth");
 const { getOrder } = require("../../middleware/order");
+const { checkIsAdmin } = require("../../middleware/user");
 
 // GET all orders
 router.get("/", auth, orderController.getAllOrders);
@@ -14,7 +15,13 @@ router.get("/:id", auth, getOrder, orderController.getOrderById);
 router.post("/", auth, orderController.createOrder);
 
 // UPDATE an order status
-router.patch("/status/:id", auth, getOrder, orderController.updateOrderStatus);
+router.patch(
+  "/status/:id",
+  auth,
+  checkIsAdmin,
+  getOrder,
+  orderController.updateOrderStatus
+);
 
 // DELETE an order
 router.delete("/:id", auth, getOrder, orderController.deleteOrder);

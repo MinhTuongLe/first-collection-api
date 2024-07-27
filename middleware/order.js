@@ -1,4 +1,6 @@
+const mongoose = require("mongoose");
 const Order = require("../models/order");
+const { OrderStatus } = require("../config/order");
 
 // Middleware to get order by ID
 async function getOrder(req, res, next) {
@@ -30,4 +32,28 @@ function checkIsOwnerOfOrder(orderOwnerId, currentUserId) {
   return orderOwnerId == currentUserId;
 }
 
-module.exports = { getOrder, checkIsOwnerOfOrder };
+// Middleware to find pending order contain item
+async function findPendingOrderContainItem(itemId) {
+  try {
+    let orders = [];
+    const pendingOrders = await Order.find({ status: "pending" });
+
+    if (pendingOrders) {
+      const populatedOrders = await Order.populate(pendingOrders, {
+        path: "orderItems",
+      });
+
+      orders = populatedOrders.filter((order) =>
+        order.orderItems.some(
+          (item) => item.itemId.toString() === itemId.toString()
+        )
+      );
+    }
+
+    return orders;
+  } catch (err) {
+    console.error(err.message);
+  }
+}
+
+module.exports = { getOrder, checkIsOwnerOfOrder, findPendingOrderContainItem };

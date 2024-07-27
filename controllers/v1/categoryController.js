@@ -1,3 +1,6 @@
+const { isEmpty } = require("lodash");
+const { Statuses } = require("../../config/status");
+const { getActiveItem } = require("../../middleware/category");
 const Category = require("../../models/category");
 
 // GET all categories with pagination, search, and filter
@@ -59,6 +62,39 @@ exports.updateCategory = async (req, res) => {
     res.category.description = req.body.description;
   }
   try {
+    const updatedCategory = await res.category.save();
+    res.json(updatedCategory);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// UPDATE a category status
+exports.updateCategoryStatus = async (req, res) => {
+  const { status } = req.body;
+
+  if (
+    status === undefined ||
+    status === null ||
+    !Object.values(Statuses).includes(status)
+  ) {
+    return res.status(400).json({ message: "Invalid status" });
+  }
+
+  try {
+    if (status === Statuses.INACTIVE) {
+      // Tìm có item nào sử dụng category này đang được active
+      const activeItems = await getActiveItem(res.category.id);
+
+      if (activeItems && !isEmpty(activeItems)) {
+        return res.status(400).json({
+          message:
+            "Update status failed. There is an active item with this category.",
+        });
+      }
+    }
+
+    res.category.status = status;
     const updatedCategory = await res.category.save();
     res.json(updatedCategory);
   } catch (err) {

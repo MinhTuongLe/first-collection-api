@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Statuses } = require("../config/status");
 
 const CategorySchema = new mongoose.Schema(
   {
@@ -9,6 +10,11 @@ const CategorySchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+    },
+    status: {
+      type: Number,
+      enum: Object.values(Statuses),
+      default: Statuses.ACTIVE,
     },
   },
   { timestamps: true }
