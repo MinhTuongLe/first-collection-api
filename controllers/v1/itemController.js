@@ -3,12 +3,20 @@ const Category = require("../../models/category");
 const { Statuses } = require("../../config/status");
 const { findPendingOrderContainItem } = require("../../middleware/order");
 const { isEmpty } = require("lodash");
+const { itemCache } = require("../../config/cacheConfig");
 
 // GET all items with pagination, search, and filter
 exports.getAllItems = async (req, res) => {
   const { page = 1, limit = 10, search = "", category = "" } = req.query;
 
   try {
+    const cacheKey = `items_${page}_${limit}_${search}_${category}`;
+    const cachedItems = itemCache.get(cacheKey);
+
+    if (cachedItems) {
+      return res.json(cachedItems);
+    }
+
     let query = {};
 
     if (search) {
@@ -28,12 +36,17 @@ exports.getAllItems = async (req, res) => {
     // Get total count of matching documents for pagination info
     const count = await Item.countDocuments(query);
 
-    res.json({
+    const result = {
       items,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       total: count,
-    });
+    };
+
+    // Cache the result
+    itemCache.set(cacheKey, result);
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -117,6 +130,7 @@ exports.updateItem = async (req, res) => {
 
   try {
     const updatedItem = await res.item.save();
+    itemCache.del(`item_${updatedItem._id}`);
     res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -149,6 +163,7 @@ exports.updateItemStatus = async (req, res) => {
 
     res.item.status = status;
     const updatedItem = await res.item.save();
+    itemCache.del(`item_${updatedItem._id}`);
     res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -159,6 +174,7 @@ exports.updateItemStatus = async (req, res) => {
 exports.deleteItem = async (req, res) => {
   try {
     await Item.deleteOne({ _id: req.params.id });
+    itemCache.del(`item_${req.params.id}`);
     res.json({ message: "Deleted Item" });
   } catch (err) {
     res.status(500).json({ message: err.message });

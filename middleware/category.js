@@ -5,9 +5,10 @@ const { Statuses } = require("../config/status");
 
 // Middleware to get category by ID
 async function getCategory(req, res, next) {
+  const { id } = req.params;
   let category;
   try {
-    category = await Category.findById(req.params.id);
+    category = await Category.findById(id);
     if (category == null) {
       return res.status(404).json({ message: "Cannot find category" });
     }

@@ -22,12 +22,14 @@ exports.getAllCategories = async (req, res) => {
     // Get total count of matching documents for pagination info
     const count = await Category.countDocuments(query);
 
-    res.json({
+    const result = {
       categories,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       total: count,
-    });
+    };
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -105,7 +107,7 @@ exports.updateCategoryStatus = async (req, res) => {
 // DELETE a category
 exports.deleteCategory = async (req, res) => {
   try {
-    await res.category.remove();
+    await Category.deleteOne({ _id: req.params.id });
     res.json({ message: "Deleted Category" });
   } catch (err) {
     res.status(500).json({ message: err.message });
