@@ -19,10 +19,10 @@ Before you begin, ensure you have met the following requirements:
 - npm install --legacy-peer-deps
 
 2. Create and Config .env file:
-DB_URL=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-PORT=your_running_port
+- DB_URL=your_mongodb_connection_string
+- JWT_SECRET=your_jwt_secret_key
+- PORT=your_running_port
 
-4. Run project:
+5. Run project:
 - npm run dev
 
