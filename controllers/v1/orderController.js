@@ -20,6 +20,7 @@ exports.getAllOrders = async (req, res) => {
     }
 
     const orders = await Order.find(query)
+      .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo mới nhất
       .populate({
         path: "orderItems",
         populate: {

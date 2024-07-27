@@ -29,6 +29,7 @@ exports.getAllItems = async (req, res) => {
 
     const items = await Item.find(query)
       .populate({ path: "category" })
+      .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo mới nhất
       .limit(limit * 1) // Convert limit to number and apply
       .skip((page - 1) * limit) // Calculate the number of documents to skip
       .exec();
