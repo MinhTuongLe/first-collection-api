@@ -1,3 +1,4 @@
+const { orderCache } = require("../../config/cacheConfig");
 const { OrderStatus } = require("../../config/order");
 const { checkIsOwnerOfOrder } = require("../../middleware/order");
 const Order = require("../../models/order");
@@ -9,6 +10,13 @@ exports.getAllOrders = async (req, res) => {
   const { page = 1, limit = 10, search = "", user = "" } = req.query;
 
   try {
+    const cacheKey = `orders_${page}_${limit}_${search}_${user}`;
+    const cachedItems = orderCache.get(cacheKey);
+
+    if (cachedItems) {
+      return res.json(cachedItems);
+    }
+
     let query = {};
 
     if (search) {
@@ -35,12 +43,17 @@ exports.getAllOrders = async (req, res) => {
     // Get total count of matching documents for pagination info
     const count = await Order.countDocuments(query);
 
-    res.json({
+    const result = {
       orders,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       total: count,
-    });
+    };
+
+    // Cache the result
+    orderCache.set(cacheKey, result);
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

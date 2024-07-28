@@ -1,3 +1,4 @@
+const { userCache } = require("../../config/cacheConfig");
 const { Roles } = require("../../config/role");
 const { Statuses } = require("../../config/status");
 const User = require("../../models/user");
@@ -53,6 +54,13 @@ exports.getAllUsers = async (req, res) => {
   const { page = 1, limit = 10, search = "" } = req.query;
 
   try {
+    const cacheKey = `users_${page}_${limit}_${search}`;
+    const cachedItems = userCache.get(cacheKey);
+
+    if (cachedItems) {
+      return res.json(cachedItems);
+    }
+
     let query = {};
 
     if (search) {
@@ -68,12 +76,17 @@ exports.getAllUsers = async (req, res) => {
     // Get total count of matching documents for pagination info
     const count = await User.countDocuments(query);
 
-    res.json({
+    const result = {
       users,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       total: count,
-    });
+    };
+
+    // Cache the result
+    userCache.set(cacheKey, result);
+
+    res.json();
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

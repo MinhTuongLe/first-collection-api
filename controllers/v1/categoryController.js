@@ -2,12 +2,20 @@ const { isEmpty } = require("lodash");
 const { Statuses } = require("../../config/status");
 const { getActiveItem } = require("../../middleware/category");
 const Category = require("../../models/category");
+const { categoryCache } = require("../../config/cacheConfig");
 
 // GET all categories with pagination, search, and filter
 exports.getAllCategories = async (req, res) => {
   const { page = 1, limit = 10, search = "" } = req.query;
 
   try {
+    const cacheKey = `categories_${page}_${limit}_${search}`;
+    const cachedItems = categoryCache.get(cacheKey);
+
+    if (cachedItems) {
+      return res.json(cachedItems);
+    }
+
     let query = {};
 
     if (search) {
@@ -29,6 +37,9 @@ exports.getAllCategories = async (req, res) => {
       currentPage: page,
       total: count,
     };
+
+    // Cache the result
+    categoryCache.set(cacheKey, result);
 
     res.json(result);
   } catch (err) {

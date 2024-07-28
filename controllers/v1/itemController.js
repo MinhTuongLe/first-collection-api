@@ -131,7 +131,6 @@ exports.updateItem = async (req, res) => {
 
   try {
     const updatedItem = await res.item.save();
-    itemCache.del(`item_${updatedItem._id}`);
     res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -164,7 +163,6 @@ exports.updateItemStatus = async (req, res) => {
 
     res.item.status = status;
     const updatedItem = await res.item.save();
-    itemCache.del(`item_${updatedItem._id}`);
     res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -175,7 +173,6 @@ exports.updateItemStatus = async (req, res) => {
 exports.deleteItem = async (req, res) => {
   try {
     await Item.deleteOne({ _id: req.params.id });
-    itemCache.del(`item_${req.params.id}`);
     res.json({ message: "Deleted Item" });
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -1,12 +1,23 @@
-const mongoose = require("mongoose");
+const { orderCache } = require("../config/cacheConfig");
 const Order = require("../models/order");
-const { OrderStatus } = require("../config/order");
 
 // Middleware to get order by ID
 async function getOrder(req, res, next) {
+  const { id } = req.params;
+
+  const cacheKey = `user_${id}`;
+
+  // Check if order is in cache
+  const cachedOrder = orderCache.get(cacheKey);
+
+  if (cachedOrder) {
+    res.order = cachedOrder;
+    return next();
+  }
+
   let order;
   try {
-    order = await Order.findById(req.params.id)
+    order = await Order.findById(id)
       .populate({
         path: "orderItems",
         populate: {
@@ -19,6 +30,9 @@ async function getOrder(req, res, next) {
     if (order == null) {
       return res.status(404).json({ message: "Cannot find order" });
     }
+
+    // Store user in cache
+    orderCache.set(cacheKey, order);
 
     res.order = order;
     next();

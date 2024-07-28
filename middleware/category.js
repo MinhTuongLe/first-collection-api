@@ -2,10 +2,23 @@ const { default: mongoose } = require("mongoose");
 const Category = require("../models/category");
 const Item = require("../models/item");
 const { Statuses } = require("../config/status");
+const { categoryCache } = require("../config/cacheConfig");
 
 // Middleware to get category by ID
 async function getCategory(req, res, next) {
   const { id } = req.params;
+
+  const cacheKey = `category_${id}`;
+
+  // Check if category is in cache
+  const cachedCategory = categoryCache.get(cacheKey);
+
+  if (cachedCategory) {
+    res.category = cachedCategory;
+    return next();
+  }
+
+  // If not in cache, fetch from database
   let category;
   try {
     category = await Category.findById(id);
@@ -15,6 +28,10 @@ async function getCategory(req, res, next) {
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
+
+  // Store category in cache
+  categoryCache.set(cacheKey, category);
+
   res.category = category;
   next();
 }
