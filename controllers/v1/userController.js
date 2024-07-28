@@ -118,6 +118,12 @@ exports.updateUser = async (req, res) => {
       .json({ message: "You can only update your own information" });
   }
 
+  // check email trùng (nếu update)
+  const findOneEmail = await User.findOne({ email: req.body.email });
+  if (findOneEmail) {
+    return res.status(400).json({ message: "This email already used" });
+  }
+
   // Chỉ cập nhật những trường không phải là null hoặc undefined
   for (const [key, value] of Object.entries(req.body)) {
     if (value != null) {
