@@ -58,6 +58,16 @@ const UserSchema = new mongoose.Schema(
       enum: Object.values(Statuses),
       default: Statuses.ACTIVE,
     },
+    avatar: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    username: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   { timestamps: true }
 );

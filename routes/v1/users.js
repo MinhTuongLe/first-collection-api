@@ -9,7 +9,7 @@ const {
 const auth = require("../../middleware/auth");
 
 // GET all users
-router.get("/", auth, checkIsAdmin, userController.getAllUsers);
+router.get("/", auth, userController.getAllUsers);
 
 // GET one user by Id
 router.get("/:id", auth, getUser, userController.getUserById);

@@ -50,7 +50,7 @@ exports.loginUser = async (req, res) => {
 
 // GET all users
 exports.getAllUsers = async (req, res) => {
-  const { page = 1, limit = 10, search = "", email = "" } = req.query;
+  const { page = 1, limit = 10, search = "" } = req.query;
 
   try {
     let query = {};
@@ -91,7 +91,7 @@ exports.getUserByEmail = async (req, res) => {
 
 // UPDATE user
 exports.updateUser = async (req, res) => {
-  const { email, name, address, phone } = req.body;
+  const { email, name, address, phone, username, avatar } = req.body;
 
   if (email != null) {
     res.user.email = email;
@@ -107,6 +107,14 @@ exports.updateUser = async (req, res) => {
 
   if (phone != null) {
     res.user.phone = phone;
+  }
+
+  if (username != null) {
+    res.user.username = username;
+  }
+
+  if (avatar != null) {
+    res.user.avatar = avatar;
   }
 
   try {
