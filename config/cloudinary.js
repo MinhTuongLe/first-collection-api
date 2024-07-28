@@ -11,7 +11,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "uploads",
+    folder: "uploads", // Ảnh được lưu vào folder uploads trên Cloudinary
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });

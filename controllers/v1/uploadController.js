@@ -1,4 +1,4 @@
-const { upload } = require("../config/cloudinary");
+const { upload } = require("../../config/cloudinary");
 
 const uploadImage = (req, res, next) => {
   try {

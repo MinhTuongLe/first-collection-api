@@ -104,34 +104,29 @@ exports.getUserByEmail = async (req, res) => {
 
 // UPDATE user
 exports.updateUser = async (req, res) => {
-  const { email, name, address, phone, username, avatar } = req.body;
+  const { id } = req.params;
+  const currUser = await User.findById(id);
 
-  if (email != null) {
-    res.user.email = email;
+  if (currUser == null) {
+    return res.status(404).json({ message: "Cannot find user" });
   }
 
-  if (name != null) {
-    res.user.name = name;
+  // nếu update user khác user hiện tại
+  if (id !== req.user.toString()) {
+    return res
+      .status(400)
+      .json({ message: "You can only update your own information" });
   }
 
-  if (address != null) {
-    res.user.address = address;
-  }
-
-  if (phone != null) {
-    res.user.phone = phone;
-  }
-
-  if (username != null) {
-    res.user.username = username;
-  }
-
-  if (avatar != null) {
-    res.user.avatar = avatar;
+  // Chỉ cập nhật những trường không phải là null hoặc undefined
+  for (const [key, value] of Object.entries(req.body)) {
+    if (value != null) {
+      currUser[key] = value;
+    }
   }
 
   try {
-    const updatedUser = await res.user.save();
+    const updatedUser = await currUser.save();
     res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ message: err.message });

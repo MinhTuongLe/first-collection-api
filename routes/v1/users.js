@@ -18,7 +18,7 @@ router.get("/:id", auth, getUser, userController.getUserById);
 router.post("/email", auth, getUserByEmail, userController.getUserByEmail);
 
 // UPDATE user
-router.patch("/:id", auth, getUser, userController.updateUser);
+router.patch("/:id", auth, userController.updateUser);
 
 // UPDATE user role
 router.patch(
