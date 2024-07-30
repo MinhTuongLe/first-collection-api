@@ -1,4 +1,5 @@
-const { upload } = require("../../config/cloudinary");
+// Middleware to upload an image
+const { upload } = require("../config/cloudinary");
 
 const uploadImage = (req, res, next) => {
   try {

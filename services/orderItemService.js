@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const OrderItem = require("../../models/orderItem");
-const Item = require("../../models/item");
-const { Statuses } = require("../../config/status");
+const OrderItem = require("../models/orderItem");
+const Item = require("../models/item");
+const { Statuses } = require("../config/status");
 
 // CREATE a new order item
 exports.createOrderItem = async (itemData) => {
@@ -13,14 +13,14 @@ exports.createOrderItem = async (itemData) => {
       throw new Error(`Invalid item ID: ${itemId}`);
     }
 
+    // Tìm item với status ACTIVE
     const chosenItem = await Item.findOne({
       _id: itemId,
       status: Statuses.ACTIVE,
     });
 
-    // xử lý khi item có status không active
     if (!chosenItem) {
-      return;
+      throw new Error(`Item with ID ${itemId} is not active or not found`);
     }
 
     // Tạo và lưu OrderItem
@@ -32,15 +32,21 @@ exports.createOrderItem = async (itemData) => {
 
     return await newOrderItem.save();
   } catch (err) {
-    throw new Error(err.message);
+    throw new Error(`Failed to create order item: ${err.message}`);
   }
 };
 
 // DELETE an order item
 exports.deleteOrderItem = async (orderItemId) => {
   try {
-    await OrderItem.deleteOne({ _id: orderItemId });
+    const result = await OrderItem.deleteOne({ _id: orderItemId });
+
+    if (result.deletedCount === 0) {
+      throw new Error(`Order item with ID ${orderItemId} not found`);
+    }
+
+    return { message: "Order item deleted successfully" };
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    throw new Error(`Failed to delete order item: ${err.message}`);
   }
 };

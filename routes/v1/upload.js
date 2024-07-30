@@ -1,8 +1,5 @@
 const express = require("express");
-const {
-  uploadImage,
-  upload,
-} = require("../../controllers/v1/uploadController");
+const { uploadImage, upload } = require("../../middleware/uploadImage");
 const router = express.Router();
 const formDataName = upload.single("image"); // Đặt key của file upload là image
 

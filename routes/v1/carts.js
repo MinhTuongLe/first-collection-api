@@ -10,7 +10,7 @@ const auth = require("../../middleware/auth");
 // router.get("/:id", auth, getOrder, orderController.getOrderById);
 
 // CREATE a new cart
-router.post("/", cartController.createCart);
+// router.post("/", cartController.createCart);
 
 // // UPDATE an order status
 // router.patch("/status/:id", auth, getOrder, orderController.updateOrderStatus);

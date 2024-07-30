@@ -1,16 +1,20 @@
 const NodeCache = require("node-cache");
 
-// Tạo một instance cache với TTL (Time To Live) mặc định là 10 phút
-const itemCache = new NodeCache({ stdTTL: 600 });
-const categoryCache = new NodeCache({ stdTTL: 600 });
-const orderCache = new NodeCache({ stdTTL: 600 });
-const userCache = new NodeCache({ stdTTL: 600 });
-const messageCache = new NodeCache({ stdTTL: 600 });
+// Custom TTL (Time To Live) (giây)
+const itemTimeCache = 30;
+const categoryTimeCache = 60;
+const orderTimeCache = 3;
+const userTimeCache = 300;
+
+// Tạo một instance cache với TTL (Time To Live)
+const itemCache = new NodeCache({ stdTTL: itemTimeCache });
+const categoryCache = new NodeCache({ stdTTL: categoryTimeCache });
+const orderCache = new NodeCache({ stdTTL: orderTimeCache });
+const userCache = new NodeCache({ stdTTL: userTimeCache });
 
 module.exports = {
   itemCache,
   categoryCache,
   userCache,
   orderCache,
-  messageCache,
 };
