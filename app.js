@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const helmet = require("helmet");
 const cors = require("cors");
-const { versioningMiddleware } = require("./middleware/versioning");
 const socketHandler = require("./socket");
 
 // Connect to database
