@@ -2,20 +2,26 @@ const express = require("express");
 const router = express.Router();
 const cartController = require("../../controllers/v1/cartController");
 const auth = require("../../middleware/auth");
+const { checkCartExists, getCart } = require("../../middleware/cart");
 
-// // GET all carts
-// router.get("/", auth, orderController.getAllOrders);
-
-// // GET one order
-// router.get("/:id", auth, getOrder, orderController.getOrderById);
+// GET one cart
+router.get("/:id", auth, getCart, cartController.getCartById);
 
 // CREATE a new cart
-// router.post("/", cartController.createCart);
+router.post("/", auth, checkCartExists, cartController.createCart);
 
-// // UPDATE an order status
-// router.patch("/status/:id", auth, getOrder, orderController.updateOrderStatus);
+// UPDATE ITEM to cart --> không có middleware getCart vì có thể không có id của cart --> tạo mới
+router.patch("/item/:id", auth, cartController.updateItemInCart);
 
-// // DELETE an order
-// router.delete("/:id", auth, getOrder, orderController.deleteOrder);
+// DELETE ITEM from cart
+router.patch(
+  "/remove-item/:id",
+  auth,
+  getCart,
+  cartController.removeItemFromCart
+);
+
+// DELETE cart
+router.delete("/:id", auth, getCart, cartController.deleteCart);
 
 module.exports = router;
