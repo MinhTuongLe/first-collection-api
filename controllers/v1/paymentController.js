@@ -38,3 +38,15 @@ exports.deletePayment = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.updatePaymentStatus = async (req, res) => {
+  try {
+    const updatedOrder = await paymentService.updateOrderStatus(
+      req.params.id,
+      req.body.status
+    );
+    res.json(updatedOrder);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

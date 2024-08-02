@@ -34,6 +34,7 @@ exports.createOrder = async (req, res) => {
 
     // Delete cart if existed body request
     if (req.body.cardId) await cartService.deleteCart(req.body.cardId);
+
     res.status(201).json(newOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });

@@ -88,3 +88,24 @@ exports.createPayment = async (data) => {
 exports.deletePayment = async (paymentId) => {
   return await Payment.deleteOne({ _id: paymentId });
 };
+
+// UPDATE an payment status
+exports.updateOrderStatus = async (paymentId, status) => {
+  const PaymentStatusesMapped = Object.values(PaymentStatus);
+
+  if (!status || !PaymentStatusesMapped.includes(status)) {
+    throw new Error("Status is invalid");
+  }
+
+  const updatePayment = await Payment.findByIdAndUpdate(
+    paymentId,
+    { status },
+    { new: true }
+  );
+
+  if (!updatePayment) {
+    throw new Error("Payment not found");
+  }
+
+  return updatePayment;
+};
