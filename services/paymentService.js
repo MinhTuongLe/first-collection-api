@@ -1,3 +1,4 @@
+const { PaymentMethod, PaymentStatus } = require("../config/payment");
 const Payment = require("../models/payment");
 
 // get all Payments
@@ -69,10 +70,21 @@ exports.getPaymentById = async (paymentId, user) => {
 // create Payment
 exports.createPayment = async (data) => {
   try {
-    const payment = new Payment(data);
+    const payment = new Payment({
+      ...data,
+      status:
+        data.method !== PaymentMethod.COD
+          ? PaymentStatus.COMPLETED
+          : PaymentStatus.PENDING,
+    });
     await payment.save();
     return payment;
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+// delete Payment
+exports.deletePayment = async (paymentId) => {
+  return await Payment.deleteOne({ _id: paymentId });
 };

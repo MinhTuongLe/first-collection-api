@@ -3,6 +3,7 @@ const router = express.Router();
 const paymentController = require("../../controllers/v1/paymentController");
 const auth = require("../../middleware/auth");
 const { getPayment } = require("../../middleware/payment");
+const { checkIsAdmin } = require("../../middleware/user");
 
 // GET all payments
 router.get("/", auth, paymentController.getAllPayments);
@@ -22,7 +23,13 @@ router.post("/", auth, paymentController.createPayment);
 //   orderController.updateOrderStatus
 // );
 
-// // DELETE an order
-// router.delete("/:id", auth, getOrder, orderController.deleteOrder);
+// DELETE a payment
+router.delete(
+  "/:id",
+  auth,
+  checkIsAdmin,
+  getPayment,
+  paymentController.deletePayment
+);
 
 module.exports = router;

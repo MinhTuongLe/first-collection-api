@@ -1,5 +1,6 @@
 const orderService = require("../../services/orderService");
 const paymentService = require("../../services/paymentService");
+const cartService = require("../../services/cartService");
 
 // GET all orders with pagination, search, and filter
 exports.getAllOrders = async (req, res) => {
@@ -30,6 +31,9 @@ exports.createOrder = async (req, res) => {
       orderId: newOrder.id,
       amount: newOrder.totalAmount,
     });
+
+    // Delete cart if existed body request
+    if (req.body.cardId) await cartService.deleteCart(req.body.cardId);
     res.status(201).json(newOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });

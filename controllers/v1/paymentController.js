@@ -29,3 +29,12 @@ exports.createPayment = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.deletePayment = async (req, res) => {
+  try {
+    await paymentService.deletePayment(req.params.id);
+    res.json({ message: "Deleted payment" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
