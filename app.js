@@ -27,6 +27,7 @@ const routes = {
     carts: require("./routes/v1/carts"),
     messages: require("./routes/v1/messages"),
     upload: require("./routes/v1/upload"),
+    payments: require("./routes/v1/payment"),
   },
 };
 
@@ -43,6 +44,7 @@ app.use("/api/v1/orders", routes.v1.orders);
 app.use("/api/v1/carts", routes.v1.carts);
 app.use("/api/v1/messages", routes.v1.messages);
 app.use("/api/v1/upload", routes.v1.upload);
+app.use("/api/v1/payments", routes.v1.payments);
 
 // Start server
 const PORT = process.env.PORT || 5000;

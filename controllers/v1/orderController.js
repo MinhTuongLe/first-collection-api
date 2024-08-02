@@ -1,4 +1,5 @@
 const orderService = require("../../services/orderService");
+const paymentService = require("../../services/paymentService");
 
 // GET all orders with pagination, search, and filter
 exports.getAllOrders = async (req, res) => {
@@ -24,6 +25,11 @@ exports.getOrderById = async (req, res) => {
 exports.createOrder = async (req, res) => {
   try {
     const newOrder = await orderService.createOrder(req.body);
+    await paymentService.createPayment({
+      userId: newOrder.userId,
+      orderId: newOrder.id,
+      amount: newOrder.totalAmount,
+    });
     res.status(201).json(newOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });

@@ -27,4 +27,16 @@ const PaymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Define a virtual field for `order`
+PaymentSchema.virtual("order", {
+  ref: "Order", // The model to use
+  localField: "orderId", // The field in the order model
+  foreignField: "_id", // The field in the order model
+  justOne: true, // For one-to-one relationship
+});
+
+// Apply the virtual fields when converting the document to JSON
+PaymentSchema.set("toObject", { virtuals: true });
+PaymentSchema.set("toJSON", { virtuals: true });
+
 module.exports = mongoose.model("Payment", PaymentSchema);
