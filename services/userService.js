@@ -11,11 +11,14 @@ const registerUser = async (email, password) => {
     const user = new User({ email, password });
     await user.save();
     const secretCode = crypto.randomBytes(64).toString("hex");
-    const verificationLink = `${
-      process.env.BASE_URL
-    }/api/v1/auth/verify?email=${encodeURIComponent(
-      email
-    )}&token=${secretCode}`;
+
+    const token = jwt.sign(
+      { email, secretCode },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" } // Thời gian hết hạn
+    );
+
+    const verificationLink = `${process.env.BASE_URL}/api/v1/auth/verify?token=${token}`;
 
     const resSendMail = await sendEmail({
       to: email,

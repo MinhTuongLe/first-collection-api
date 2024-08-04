@@ -1,6 +1,7 @@
 const { isEmpty } = require("lodash");
 const { Statuses } = require("../../config/status");
 const userService = require("../../services/userService");
+const jwt = require("jsonwebtoken");
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -30,7 +31,14 @@ exports.loginUser = async (req, res) => {
 exports.verifyUser = async (req, res) => {
   try {
     let status = false;
-    const foundUser = await userService.getUserByEmail(req.query.email);
+    const token = req.query.token;
+
+    // Giải mã token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const { email } = decoded;
+
+    const foundUser = await userService.getUserByEmail(email);
 
     if (foundUser && !isEmpty(foundUser)) {
       const result = await userService.updateUserStatus(

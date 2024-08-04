@@ -96,7 +96,20 @@ exports.createOrder = async (orderData) => {
     totalAmount,
   });
 
-  return await order.save();
+  await order.save();
+
+  // Populate orderItems with item details
+  const populatedOrder = await Order.findById(order._id)
+    .populate({
+      path: "orderItems",
+      populate: {
+        path: "item",
+        model: "Item",
+      },
+    })
+    .exec();
+
+  return populatedOrder;
 };
 
 // UPDATE an order status
