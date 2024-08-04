@@ -8,9 +8,9 @@ const socketHandler = (server) => {
     },
   });
 
-  global.onlineUsers = new Map();
+  const onlineUsers = new Map();
+
   io.on("connection", (socket) => {
-    global.chatSocket = socket;
     socket.on("add-user", (userId) => {
       onlineUsers.set(userId, socket.id);
     });
@@ -22,6 +22,8 @@ const socketHandler = (server) => {
       }
     });
   });
+
+  return { io, onlineUsers };
 };
 
 module.exports = socketHandler;

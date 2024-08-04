@@ -77,7 +77,7 @@ exports.getUserById = async (req, res) => {
 // GET one user by email
 exports.getUserByEmail = async (req, res) => {
   try {
-    const result = await userService.getUserByEmail(req.params.email);
+    const result = await userService.getUserByEmail(req.body.email);
     res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
