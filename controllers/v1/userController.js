@@ -1,6 +1,7 @@
 const { isEmpty } = require("lodash");
 const { Statuses } = require("../../config/status");
 const userService = require("../../services/userService");
+const refreshTokenService = require("../../services/refreshTokenService");
 const jwt = require("jsonwebtoken");
 
 // Register a new user
@@ -22,6 +23,14 @@ exports.loginUser = async (req, res) => {
   try {
     const result = await userService.loginUser(email, password);
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Logout
+exports.logoutUser = async (req, res) => {
+  try {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

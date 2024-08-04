@@ -12,4 +12,7 @@ router.post("/login", userController.loginUser);
 // VERIFY a user
 router.get("/verify", userController.verifyUser);
 
+// LOGOUT
+router.post("/logout", userController.logoutUser);
+
 module.exports = router;
