@@ -9,4 +9,7 @@ router.post("/register", checkEmailExists, userController.registerUser);
 // LOGIN a user
 router.post("/login", userController.loginUser);
 
+// VERIFY a user
+router.get("/verify", userController.verifyUser);
+
 module.exports = router;

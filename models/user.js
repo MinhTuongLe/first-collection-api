@@ -56,7 +56,7 @@ const UserSchema = new mongoose.Schema(
     status: {
       type: Number,
       enum: Object.values(Statuses),
-      default: Statuses.ACTIVE,
+      default: Statuses.INACTIVE,
     },
     avatar: {
       type: String,

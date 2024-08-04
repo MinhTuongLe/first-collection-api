@@ -1,3 +1,5 @@
+const { isEmpty } = require("lodash");
+const { Statuses } = require("../../config/status");
 const userService = require("../../services/userService");
 
 // Register a new user
@@ -12,7 +14,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Login a user
+// Login an user
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -21,6 +23,26 @@ exports.loginUser = async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Verify a user
+exports.verifyUser = async (req, res) => {
+  try {
+    let status = false;
+    const foundUser = await userService.getUserByEmail(req.query.email);
+
+    if (foundUser && !isEmpty(foundUser)) {
+      const result = await userService.updateUserStatus(
+        foundUser.id,
+        Statuses.ACTIVE
+      );
+      if (!isEmpty(result)) status = true;
+    }
+
+    return res.json({ status });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 

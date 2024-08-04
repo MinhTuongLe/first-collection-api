@@ -2,13 +2,33 @@ const User = require("../models/user");
 const { Roles } = require("../config/role");
 const { Statuses } = require("../config/status");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("./emailService");
+const crypto = require("crypto");
 
 // Register a new user
 const registerUser = async (email, password) => {
   try {
     const user = new User({ email, password });
     await user.save();
-    return { message: "User registered successfully" };
+    const secretCode = crypto.randomBytes(64).toString("hex");
+    const verificationLink = `${
+      process.env.BASE_URL
+    }/api/v1/auth/verify?email=${encodeURIComponent(
+      email
+    )}&token=${secretCode}`;
+
+    const resSendMail = await sendEmail({
+      to: email,
+      subject: `Greetings, ${email.split("@")[0]}`,
+      verificationLink,
+    });
+    return {
+      message: `User registered successfully. ${
+        resSendMail
+          ? "Check your email to verify account."
+          : "Send verify email failed."
+      }`,
+    };
   } catch (err) {
     throw new Error(err.message);
   }
@@ -23,7 +43,7 @@ const loginUser = async (email, password) => {
     }
 
     if (user.status !== Statuses.ACTIVE) {
-      throw new Error("User is disabled");
+      throw new Error("User is inactive");
     }
 
     const isMatch = await user.matchPassword(password);
