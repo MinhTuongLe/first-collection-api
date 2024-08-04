@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <style>
+        body {
+            background-color: #f4f4f7;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #333333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #2dc2ac;
+            color: #ffffff;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .content p {
+            margin: 10px 0;
+        }
+
+        .content a {
+            color: #2dc2ac;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: right;
+            color: #777777;
+            font-size: 12px;
+            border-top: 1px solid #dddddd;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #dddddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f9f9f9;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 20px 0;
+            background-color: #2dc2ac;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #1a9d8f;
+        }
+
+        .button span {
+            font-weight: bold;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Summary</h1>
+        </div>
+        <div class="content">
+            <p>Dear <%= email %>,</p>
+            <p>Thank you for your order. Here are the details:</p>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order=> { %>
+                        <tr>
+                            <td>
+                                <%= order.itemName %>
+                            </td>
+                            <td>
+                                <%= order.quantity %>
+                            </td>
+                            <td>
+                                <%= order.price %>
+                            </td>
+                            <td>
+                                <%= order.total %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <p>Total Amount: <%= totalAmount %>
+            </p>
+
+            <p>If you have any questions, feel free to contact us.</p>
+            <a href="mailto:mt09122002@gmail.com?subject=Contact%20Us&body=Dear%20Admin,%0A%0A"
+                class="button"><span>Contact Us</span></a>
+        </div>
+        <div class="footer">
+            <p>Best regards,</p>
+            <p>The Team</p>
+        </div>
+    </div>
+</body>
+
+</html>

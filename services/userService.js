@@ -2,7 +2,7 @@ const User = require("../models/user");
 const { Roles } = require("../config/role");
 const { Statuses } = require("../config/status");
 const jwt = require("jsonwebtoken");
-const { sendEmail } = require("./emailService");
+const { sendVerificationMail } = require("./emailService");
 const crypto = require("crypto");
 
 // Register a new user
@@ -20,7 +20,7 @@ const registerUser = async (email, password) => {
 
     const verificationLink = `${process.env.BASE_URL}/api/v1/auth/verify?token=${token}`;
 
-    const resSendMail = await sendEmail({
+    const resSendMail = await sendVerificationMail({
       to: email,
       subject: `Greetings, ${email.split("@")[0]}`,
       verificationLink,

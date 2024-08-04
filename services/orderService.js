@@ -107,6 +107,7 @@ exports.createOrder = async (orderData) => {
         model: "Item",
       },
     })
+    .populate({ path: "user" })
     .exec();
 
   return populatedOrder;

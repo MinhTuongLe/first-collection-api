@@ -1,6 +1,8 @@
 const orderService = require("../../services/orderService");
 const paymentService = require("../../services/paymentService");
 const cartService = require("../../services/cartService");
+const emailService = require("../../services/emailService");
+const { formatMoney } = require("../../utils/money");
 
 // GET all orders with pagination, search, and filter
 exports.getAllOrders = async (req, res) => {
@@ -35,7 +37,30 @@ exports.createOrder = async (req, res) => {
     // Delete cart if existed body request
     if (req.body.cardId) await cartService.deleteCart(req.body.cardId);
 
-    res.status(201).json(newOrder);
+    // Send order summary via user's email
+    const responseSendMail = await emailService.sendOrderSummaryMail({
+      to: newOrder.user.email,
+      subject: `Create order #${newOrder.id} successfully!`,
+      totalAmount: newOrder.totalAmount,
+      orders: newOrder.orderItems.map((item) => {
+        return {
+          id: item.itemId,
+          itemName: item.item.name,
+          price: formatMoney(item.price || 0),
+          quantity: item.quantity,
+          total: formatMoney(item.price * item.quantity || 0),
+        };
+      }),
+    });
+
+    const result = {
+      ...newOrder._doc,
+      message: responseSendMail
+        ? "Please check your email for order summary"
+        : "Failed to send order summary via email",
+    };
+
+    res.status(201).json(result);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
