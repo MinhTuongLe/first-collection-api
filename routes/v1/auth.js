@@ -12,6 +12,9 @@ router.post("/login", userController.loginUser);
 // VERIFY a user
 router.get("/verify", userController.verifyUser);
 
+// REFRESH TOKEN
+router.post("/refresh-token", userController.refreshToken);
+
 // LOGOUT
 router.post("/logout", userController.logoutUser);
 

@@ -4,6 +4,10 @@ const { Statuses } = require("../config/status");
 const jwt = require("jsonwebtoken");
 const { sendVerificationMail } = require("./emailService");
 const crypto = require("crypto");
+const {
+  saveRefreshToken,
+  generateRefreshToken,
+} = require("./refreshTokenService");
 
 // Register a new user
 const registerUser = async (email, password) => {
@@ -54,11 +58,18 @@ const loginUser = async (email, password) => {
       throw new Error("Wrong password");
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "12h",
+    const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
 
-    return { token };
+    // Generate Refresh Token
+    const refreshToken = await generateRefreshToken(); // Function to generate refresh token
+    const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 hours
+
+    // Save Refresh Token
+    await saveRefreshToken(user._id, refreshToken, expiresAt);
+
+    return { accessToken };
   } catch (err) {
     throw new Error(err.message);
   }

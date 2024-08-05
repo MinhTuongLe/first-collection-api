@@ -1,8 +1,13 @@
 const { isEmpty } = require("lodash");
 const { Statuses } = require("../../config/status");
 const userService = require("../../services/userService");
-const refreshTokenService = require("../../services/refreshTokenService");
 const jwt = require("jsonwebtoken");
+const {
+  revokeRefreshToken,
+  validateRefreshToken,
+  saveRefreshToken,
+  generateRefreshToken,
+} = require("../../services/refreshTokenService");
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -31,6 +36,50 @@ exports.loginUser = async (req, res) => {
 // Logout
 exports.logoutUser = async (req, res) => {
   try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Revoke Refresh Token
+    await revokeRefreshToken(userId);
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Refresh token
+exports.refreshToken = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isValid = await validateRefreshToken(userId);
+
+    if (!isValid.valid) {
+      return res.status(401).json({ message: isValid.reason });
+    }
+
+    // Tạo Access Token mới
+    const newAccessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // Tạo Refresh Token mới và lưu vào cơ sở dữ liệu
+    const newRefreshToken = await generateRefreshToken();
+    const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 hours
+
+    // Xóa các Refresh Token cũ của người dùng và lưu Refresh Token mới
+    await saveRefreshToken(userId, newRefreshToken, expiresAt);
+
+    res.status(200).json({
+      accessToken: newAccessToken,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

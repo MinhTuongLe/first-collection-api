@@ -2,6 +2,9 @@ const RefreshToken = require("../models/refreshtoken");
 const jwt = require("jsonwebtoken");
 
 const saveRefreshToken = async (userId, token, expiresAt) => {
+  // Xóa tất cả các Refresh Token hiện tại của người dùng
+  await RefreshToken.deleteMany({ userId });
+
   const refreshToken = new RefreshToken({
     userId,
     refreshToken: token,
@@ -11,8 +14,8 @@ const saveRefreshToken = async (userId, token, expiresAt) => {
   await refreshToken.save();
 };
 
-const validateRefreshToken = async (token) => {
-  const refreshToken = await RefreshToken.findOne({ refreshToken: token });
+const validateRefreshToken = async (userId) => {
+  const refreshToken = await RefreshToken.findOne({ userId });
 
   if (!refreshToken) return { valid: false, reason: "Token not found" };
 
@@ -24,15 +27,12 @@ const validateRefreshToken = async (token) => {
   return { valid: true };
 };
 
-const generateAccessToken = async (userId) => {
-  return jwt.sign({ userId }, "secretKey", { expiresIn: "1h" });
+const generateRefreshToken = async (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "12h" });
 };
 
-const revokeRefreshToken = async (token) => {
-  await RefreshToken.updateOne(
-    { refreshToken: token },
-    { $set: { revoked: true } }
-  );
+const revokeRefreshToken = async (userId) => {
+  await RefreshToken.deleteMany({ userId });
 };
 
 const removeExpiredTokens = async () => {
@@ -41,4 +41,8 @@ const removeExpiredTokens = async () => {
 
 module.exports = {
   saveRefreshToken,
+  validateRefreshToken,
+  generateRefreshToken,
+  revokeRefreshToken,
+  removeExpiredTokens,
 };
