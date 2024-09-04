@@ -9,6 +9,7 @@ const {
   generateRefreshToken,
 } = require("./refreshTokenService");
 const { JWT_SECRET, BASE_URL } = require("../config/config");
+const securityUtils = require("../utils/auth");
 
 // Register a new user
 const registerUser = async (email, password) => {
@@ -43,7 +44,7 @@ const registerUser = async (email, password) => {
 };
 
 // Login a user
-const loginUser = async (email, password) => {
+const loginUser = async (email, password, savedPassword) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -54,7 +55,10 @@ const loginUser = async (email, password) => {
       throw new Error("User is inactive");
     }
 
-    const isMatch = await user.matchPassword(password);
+    const isMatch = await securityUtils.validatePassword(
+      password,
+      savedPassword
+    );
     if (!isMatch) {
       throw new Error("Wrong password");
     }

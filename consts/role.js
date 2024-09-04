@@ -1,4 +1,4 @@
-// Roles
+// Roles of User
 const Roles = {
   USER: 1,
   ADMIN: 2,
