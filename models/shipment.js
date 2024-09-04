@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { ShipmentStatus, ShipmentCarrier } = require("../config/shipment");
+const { ShipmentStatus, ShipmentCarrier } = require("../consts/shipment");
 
 const ShipmentSchema = new mongoose.Schema(
   {

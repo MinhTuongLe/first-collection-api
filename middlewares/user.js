@@ -1,4 +1,4 @@
-const { Roles } = require("../config/role");
+const { Roles } = require("../consts/role");
 const User = require("../models/user");
 const { userCache } = require("../config/cacheConfig");
 

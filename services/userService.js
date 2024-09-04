@@ -1,6 +1,6 @@
 const User = require("../models/user");
-const { Roles } = require("../config/role");
-const { Statuses } = require("../config/status");
+const { Roles } = require("../consts/role");
+const { Statuses } = require("../consts/status");
 const jwt = require("jsonwebtoken");
 const { sendVerificationMail } = require("./emailService");
 const crypto = require("crypto");
@@ -8,6 +8,7 @@ const {
   saveRefreshToken,
   generateRefreshToken,
 } = require("./refreshTokenService");
+const { JWT_SECRET, BASE_URL } = require("../config/config");
 
 // Register a new user
 const registerUser = async (email, password) => {
@@ -18,11 +19,11 @@ const registerUser = async (email, password) => {
 
     const token = jwt.sign(
       { email, secretCode },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: "24h" } // Thời gian hết hạn
     );
 
-    const verificationLink = `${process.env.BASE_URL}/api/v1/auth/verify?token=${token}`;
+    const verificationLink = `${BASE_URL}/api/v1/auth/verify?token=${token}`;
 
     const resSendMail = await sendVerificationMail({
       to: email,
@@ -58,7 +59,7 @@ const loginUser = async (email, password) => {
       throw new Error("Wrong password");
     }
 
-    const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
 

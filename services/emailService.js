@@ -3,6 +3,7 @@ const transporter = require("../config/email");
 const fs = require("fs");
 const ejs = require("ejs");
 const { formatMoney } = require("../utils/money");
+const { EMAIL_USER } = require("../config/config");
 
 exports.sendVerificationMail = async ({ to, subject, verificationLink }) => {
   try {
@@ -14,7 +15,7 @@ exports.sendVerificationMail = async ({ to, subject, verificationLink }) => {
 
     // Cấu hình thông tin email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: EMAIL_USER,
       to,
       subject,
       html,
@@ -42,7 +43,7 @@ exports.sendOrderSummaryMail = async ({ to, subject, orders, totalAmount }) => {
 
     // Cấu hình thông tin email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: EMAIL_USER,
       to,
       subject,
       html,

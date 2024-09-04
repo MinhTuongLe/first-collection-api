@@ -1,4 +1,4 @@
-const { PaymentMethod, PaymentStatus } = require("../config/payment");
+const { PaymentMethod, PaymentStatus } = require("../consts/payment");
 const Payment = require("../models/payment");
 
 // get all Payments

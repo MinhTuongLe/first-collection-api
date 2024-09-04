@@ -1,6 +1,6 @@
 const { isEmpty } = require("lodash");
-const { Statuses } = require("../config/status");
-const { getActiveItem } = require("../middleware/category");
+const { Statuses } = require("../consts/status");
+const { getActiveItem } = require("../middlewares/category");
 const Category = require("../models/category");
 const { categoryCache } = require("../config/cacheConfig");
 

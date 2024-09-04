@@ -1,6 +1,6 @@
 const cartService = require("../../services/cartService");
 const Cart = require("../../models/cart");
-const { EditItemTypes } = require("../../config/cart");
+const { EditItemTypes } = require("../../consts/cart");
 
 exports.createCart = async (req, res) => {
   try {

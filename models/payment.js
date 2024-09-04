@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { PaymentMethod, PaymentStatus } = require("../config/payment");
+const { PaymentMethod, PaymentStatus } = require("../consts/payment");
 
 const PaymentSchema = new mongoose.Schema(
   {

@@ -1,6 +1,6 @@
 const Order = require("../models/order");
 const OrderItem = require("../models/orderItem");
-const { OrderStatus } = require("../config/order");
+const { OrderStatus } = require("../consts/order");
 const orderItemService = require("./orderItemService");
 
 // GET all orders with pagination, search, and filter

@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const paymentController = require("../../controllers/v1/paymentController");
-const auth = require("../../middleware/auth");
+const auth = require("../../middlewares/auth");
 const {
   getPayment,
   checkIsPaymentOwnerOrAdmin,
-} = require("../../middleware/payment");
-const { checkIsAdmin } = require("../../middleware/user");
+} = require("../../middlewares/payment");
+const { checkIsAdmin } = require("../../middlewares/user");
 
 // GET all payments
 router.get("/", auth, paymentController.getAllPayments);

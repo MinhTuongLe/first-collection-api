@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Category = require("../models/category");
 const Item = require("../models/item");
-const { Statuses } = require("../config/status");
+const { Statuses } = require("../consts/status");
 const { categoryCache } = require("../config/cacheConfig");
 
 // Middleware to get category by ID

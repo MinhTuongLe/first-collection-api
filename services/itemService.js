@@ -1,7 +1,7 @@
 const Item = require("../models/item");
 const Category = require("../models/category");
-const { Statuses } = require("../config/status");
-const { findPendingOrderContainItem } = require("../middleware/order");
+const { Statuses } = require("../consts/status");
+const { findPendingOrderContainItem } = require("../middlewares/order");
 const { itemCache } = require("../config/cacheConfig");
 
 const CACHE_EXPIRATION_TIME = 1800; // 30 minutes in seconds

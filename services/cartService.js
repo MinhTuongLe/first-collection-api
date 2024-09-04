@@ -1,4 +1,4 @@
-const { EditItemTypes } = require("../config/cart");
+const { EditItemTypes } = require("../consts/cart");
 const Cart = require("../models/cart");
 const Item = require("../models/item");
 const OrderItem = require("../models/orderItem");

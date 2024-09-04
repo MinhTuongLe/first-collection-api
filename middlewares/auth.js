@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../config/config");
 
 const auth = (req, res, next) => {
   // Kiểm tra sự tồn tại của header "Authorization"
@@ -16,7 +17,7 @@ const auth = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded.userId;
     next();
   } catch (err) {

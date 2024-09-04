@@ -5,8 +5,8 @@ const {
   getUser,
   getUserByEmail,
   checkIsAdmin,
-} = require("../../middleware/user");
-const auth = require("../../middleware/auth");
+} = require("../../middlewares/user");
+const auth = require("../../middlewares/auth");
 
 // GET all users
 router.get("/", auth, userController.getAllUsers);

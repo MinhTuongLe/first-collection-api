@@ -1,3 +1,4 @@
+const { JWT_SECRET } = require("../config/config");
 const RefreshToken = require("../models/refreshtoken");
 const jwt = require("jsonwebtoken");
 
@@ -28,7 +29,7 @@ const validateRefreshToken = async (userId) => {
 };
 
 const generateRefreshToken = async (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "12h" });
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "12h" });
 };
 
 const revokeRefreshToken = async (userId) => {

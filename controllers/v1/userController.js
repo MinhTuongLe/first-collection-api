@@ -1,5 +1,5 @@
 const { isEmpty } = require("lodash");
-const { Statuses } = require("../../config/status");
+const { Statuses } = require("../../consts/status");
 const userService = require("../../services/userService");
 const jwt = require("jsonwebtoken");
 const {
@@ -8,6 +8,7 @@ const {
   saveRefreshToken,
   generateRefreshToken,
 } = require("../../services/refreshTokenService");
+const { JWT_SECRET } = require("../../config/config");
 
 // Register a new user
 exports.registerUser = async (req, res) => {
@@ -66,7 +67,7 @@ exports.refreshToken = async (req, res) => {
     }
 
     // Tạo Access Token mới
-    const newAccessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const newAccessToken = jwt.sign({ userId }, JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -92,7 +93,7 @@ exports.verifyUser = async (req, res) => {
     const token = req.query.token;
 
     // Giải mã token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
 
     const { email } = decoded;
 

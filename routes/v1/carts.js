@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../../controllers/v1/cartController");
-const auth = require("../../middleware/auth");
-const { checkCartExists, getCart } = require("../../middleware/cart");
+const auth = require("../../middlewares/auth");
+const { checkCartExists, getCart } = require("../../middlewares/cart");
 
 // GET one cart
 router.get("/:id", auth, getCart, cartController.getCartById);

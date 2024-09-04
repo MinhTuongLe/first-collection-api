@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
-const { Roles } = require("../config/role");
-const { Statuses } = require("../config/status");
+const { Roles } = require("../consts/role");
+const { Statuses } = require("../consts/status");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -67,6 +67,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: false,
       default: "",
+    },
+  },
+  {
+    toJSON: {
+      transform(doc, ret) {
+        delete ret.password;
+        delete ret.__v;
+      },
     },
   },
   { timestamps: true }

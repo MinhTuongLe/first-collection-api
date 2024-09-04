@@ -1,29 +1,18 @@
-const socket = require("socket.io");
-
-const socketHandler = (server) => {
-  const io = socket(server, {
+module.exports = (server) => {
+  const io = require("socket.io")(server, {
     cors: {
       origin: "*",
-      credentials: true,
+      methods: ["GET", "POST"],
     },
   });
 
-  const onlineUsers = new Map();
-
   io.on("connection", (socket) => {
-    socket.on("add-user", (userId) => {
-      onlineUsers.set(userId, socket.id);
-    });
+    console.log("New client connected");
 
-    socket.on("send-msg", (data) => {
-      const sendUserSocket = onlineUsers.get(data.to);
-      if (sendUserSocket) {
-        socket.to(sendUserSocket).emit("msg-receive", data.msg);
-      }
+    // Handle socket events here
+
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
     });
   });
-
-  return { io, onlineUsers };
 };
-
-module.exports = socketHandler;

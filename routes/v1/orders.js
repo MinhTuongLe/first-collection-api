@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../../controllers/v1/orderController");
-const auth = require("../../middleware/auth");
-const { getOrder } = require("../../middleware/order");
-const { checkIsAdmin } = require("../../middleware/user");
+const auth = require("../../middlewares/auth");
+const { getOrder } = require("../../middlewares/order");
+const { checkIsAdmin } = require("../../middlewares/user");
 
 // GET all orders
 router.get("/", auth, orderController.getAllOrders);

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../../middleware/auth");
+const auth = require("../../middlewares/auth");
 const messageController = require("../../controllers/v1/messageController");
 
 router.post("/add-msg", auth, messageController.addMessage);

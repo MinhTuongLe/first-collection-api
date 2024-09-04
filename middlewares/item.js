@@ -1,4 +1,4 @@
-const { itemCache } = require("../config/cacheConfig"); // Đường dẫn tới file cấu hình cache
+const { itemCache } = require("../config/cacheConfig");
 const Item = require("../models/item");
 
 // Middleware to get item by ID
