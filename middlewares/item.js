@@ -35,9 +35,9 @@ async function getItem(req, res, next) {
 
 // Clear cache
 function clearItemCache() {
-  categoryCache.keys().forEach((key) => {
+  itemCache.keys().forEach((key) => {
     if (key.startsWith("items_") || key.startsWith("item_")) {
-      categoryCache.del(key);
+      itemCache.del(key);
     }
   });
 }

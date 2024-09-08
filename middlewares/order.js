@@ -72,9 +72,9 @@ async function findPendingOrderContainItem(itemId) {
 
 // Clear cache
 function clearOrderCache() {
-  categoryCache.keys().forEach((key) => {
+  orderCache.keys().forEach((key) => {
     if (key.startsWith("orders_") || key.startsWith("order_")) {
-      categoryCache.del(key);
+      orderCache.del(key);
     }
   });
 }
