@@ -3,6 +3,7 @@ const Category = require("../models/category");
 const { Statuses } = require("../consts/status");
 const { findPendingOrderContainItem } = require("../middlewares/order");
 const { itemCache } = require("../config/cacheConfig");
+const { clearItemCache } = require("../middlewares/item");
 
 const CACHE_EXPIRATION_TIME = 1800; // 30 minutes in seconds
 
@@ -78,6 +79,7 @@ exports.createItem = async (data) => {
 
   const newItem = await item.save();
   const { categoryId: catId, ...itemWithoutCategoryId } = newItem.toObject();
+  clearItemCache();
 
   return {
     ...itemWithoutCategoryId,
@@ -108,7 +110,9 @@ exports.updateItem = async (itemId, data) => {
     item.categoryId = categoryId;
   }
 
-  return await item.save();
+  const result = await item.save();
+  clearItemCache();
+  return result;
 };
 
 exports.updateItemStatus = async (itemId, status) => {
@@ -137,9 +141,12 @@ exports.updateItemStatus = async (itemId, status) => {
   }
 
   item.status = status;
-  return await item.save();
+  const result = await item.save();
+  clearItemCache();
+  return result;
 };
 
 exports.deleteItem = async (itemId) => {
-  return await Item.deleteOne({ _id: itemId });
+  await Item.deleteOne({ _id: itemId });
+  clearItemCache();
 };

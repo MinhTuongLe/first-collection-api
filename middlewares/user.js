@@ -103,9 +103,19 @@ async function checkIsAdmin(req, res, next) {
   }
 }
 
+// Clear cache
+function clearUserCache() {
+  categoryCache.keys().forEach((key) => {
+    if (key.startsWith("users_") || key.startsWith("user_")) {
+      categoryCache.del(key);
+    }
+  });
+}
+
 module.exports = {
   getUser,
   checkEmailExists,
   getUserByEmail,
   checkIsAdmin,
+  clearUserCache,
 };

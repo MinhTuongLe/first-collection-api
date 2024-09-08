@@ -50,4 +50,13 @@ async function getActiveItem(categoryId) {
   }
 }
 
-module.exports = { getCategory, getActiveItem };
+// Clear cache
+function clearCategoryCache() {
+  categoryCache.keys().forEach((key) => {
+    if (key.startsWith("categories_") || key.startsWith("category_")) {
+      categoryCache.del(key);
+    }
+  });
+}
+
+module.exports = { getCategory, getActiveItem, clearCategoryCache };

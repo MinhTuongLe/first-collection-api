@@ -33,4 +33,13 @@ async function getItem(req, res, next) {
   next();
 }
 
-module.exports = getItem;
+// Clear cache
+function clearItemCache() {
+  categoryCache.keys().forEach((key) => {
+    if (key.startsWith("items_") || key.startsWith("item_")) {
+      categoryCache.del(key);
+    }
+  });
+}
+
+module.exports = { getItem, clearItemCache };

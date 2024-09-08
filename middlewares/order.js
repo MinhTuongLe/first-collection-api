@@ -70,4 +70,18 @@ async function findPendingOrderContainItem(itemId) {
   }
 }
 
-module.exports = { getOrder, checkIsOwnerOfOrder, findPendingOrderContainItem };
+// Clear cache
+function clearOrderCache() {
+  categoryCache.keys().forEach((key) => {
+    if (key.startsWith("orders_") || key.startsWith("order_")) {
+      categoryCache.del(key);
+    }
+  });
+}
+
+module.exports = {
+  getOrder,
+  checkIsOwnerOfOrder,
+  findPendingOrderContainItem,
+  clearOrderCache,
+};

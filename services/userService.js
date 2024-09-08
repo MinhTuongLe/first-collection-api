@@ -10,6 +10,7 @@ const {
 } = require("./refreshTokenService");
 const { JWT_SECRET, BASE_URL } = require("../config/config");
 const securityUtils = require("../utils/auth");
+const { clearUserCache } = require("../middlewares/user");
 
 // Register a new user
 const registerUser = async (email, password) => {
@@ -161,6 +162,7 @@ const updateUser = async (id, userData, currentUserId) => {
     });
 
     const updatedUser = await user.save();
+    clearUserCache();
     return updatedUser;
   } catch (err) {
     throw new Error(err.message);
@@ -181,6 +183,7 @@ const updateUserRole = async (id, role) => {
 
     user.role = role;
     const updatedUser = await user.save();
+    clearUserCache();
     return updatedUser;
   } catch (err) {
     throw new Error(err.message);
@@ -201,6 +204,7 @@ const updateUserStatus = async (id, status) => {
 
     user.status = status;
     const updatedUser = await user.save();
+    clearUserCache();
     return updatedUser;
   } catch (err) {
     throw new Error(err.message);
@@ -211,6 +215,7 @@ const updateUserStatus = async (id, status) => {
 const deleteUser = async (id) => {
   try {
     const result = await User.deleteOne({ _id: id });
+    clearUserCache();
     if (result.deletedCount === 0) {
       throw new Error("User not found");
     }

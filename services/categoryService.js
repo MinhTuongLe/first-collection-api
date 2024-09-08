@@ -1,6 +1,9 @@
 const { isEmpty } = require("lodash");
-const { Statuses } = require("../config/status");
-const { getActiveItem } = require("../middleware/category");
+const { Statuses } = require("../consts/status");
+const {
+  getActiveItem,
+  clearCategoryCache,
+} = require("../middlewares/category");
 const Category = require("../models/category");
 const { categoryCache } = require("../config/cacheConfig");
 
@@ -48,7 +51,9 @@ exports.createCategory = async (data) => {
     description: data.description,
   });
 
-  return await category.save();
+  const result = await category.save();
+  clearCategoryCache();
+  return result;
 };
 
 exports.updateCategory = async (category, data) => {
@@ -59,7 +64,9 @@ exports.updateCategory = async (category, data) => {
     category.description = data.description;
   }
 
-  return await category.save();
+  const result = await category.save();
+  clearCategoryCache();
+  return result;
 };
 
 exports.updateCategoryStatus = async (category, status) => {
@@ -74,9 +81,12 @@ exports.updateCategoryStatus = async (category, status) => {
   }
 
   category.status = status;
-  return await category.save();
+  const result = await category.save();
+  clearCategoryCache();
+  return result;
 };
 
 exports.deleteCategory = async (categoryId) => {
   await Category.deleteOne({ _id: categoryId });
+  clearCategoryCache();
 };

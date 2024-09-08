@@ -2,6 +2,7 @@ const Order = require("../models/order");
 const OrderItem = require("../models/orderItem");
 const { OrderStatus } = require("../consts/order");
 const orderItemService = require("./orderItemService");
+const { clearOrderCache } = require("../middlewares/order");
 
 // GET all orders with pagination, search, and filter
 exports.getAllOrders = async (query) => {
@@ -110,6 +111,7 @@ exports.createOrder = async (orderData) => {
     .populate({ path: "user" })
     .exec();
 
+  clearOrderCache();
   return populatedOrder;
 };
 
@@ -131,6 +133,7 @@ exports.updateOrderStatus = async (orderId, status) => {
     throw new Error("Order not found");
   }
 
+  clearOrderCache();
   return updatedOrder;
 };
 
@@ -157,6 +160,7 @@ exports.deleteOrder = async (orderId, user) => {
   }
 
   await Order.deleteOne({ _id: orderId });
+  clearOrderCache();
 
   return { message: "Deleted Order and associated OrderItems" };
 };
